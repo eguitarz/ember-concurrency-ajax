@@ -1,0 +1,64 @@
+<div class="container">
+  <h1>ember-concurrency-ajax</h1>
+
+  <div style="display: flex;padding: 2em 0; flex-direction: row;border-bottom: 1px solid lightgrey;border-top: 1px solid lightgrey;perspective: 1000px;">
+    <div class="left">
+      <h2 style="margin: 0 0.2em">requests</h2>
+      <div style="display: flex; flex-direction: column;">
+        <button onclick={{pipe
+          (request '/test.json') 
+          (action 'process')
+        }}>
+          default
+        </button>
+        <button onclick={{pipe
+          (request '/test.json' name='enqueue')
+          (action 'process')
+        }}>
+          enqueue
+        </button>
+        <button onclick={{pipe
+          (request '/test.json' name='drop')
+          (action 'process')
+        }}>
+          drop
+        </button>
+
+        <button onclick={{pipe
+          (request '/test.json' name='restartable')
+          (action 'process')
+        }}>
+          restartable max-concurrency(5)
+        </button>
+
+        <button 
+          disabled={{not (get (get-task 'restartable') 'isRunning')}}
+          onclick={{cancel-all (get-task 'restartable')}}>
+          cancel restartable
+        </button>
+      </div>
+    </div>
+
+    <div class="right">
+      <small style="padding: 0.5em;font-size:0.5em;color: grey;">concurrency | queue</small>
+      {{#each-in tasks as |name|}}
+        {{#with (get tasks name) as |task|}}
+          {{log task}}
+          <div class="task {{if task.isRunning 'task--running'}}">
+            <div class="task__name">task: {{name}} </div>
+            <div style="display:flex;flex-direction:row;">
+              <div class="task__concurrency">{{task.concurrency}}</div>
+              <div class="task__queued">{{task.numQueued}}</div>
+            </div>
+          </div>
+        {{/with}}
+      {{/each-in}}
+    </div>
+  </div>
+
+  <p>
+    {{#each result as |n|}}
+      <span style="font-size:1.4em;margin: 0.2em; color:cadetblue">{{n}}</span>
+    {{/each}}
+  </p>
+</div>

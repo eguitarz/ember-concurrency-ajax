@@ -1,0 +1,1 @@
+export { default } from 'ember-concurrency-ajax/helpers/get-task';

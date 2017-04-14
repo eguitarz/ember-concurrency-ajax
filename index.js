@@ -2,5 +2,5 @@
 'use strict';
 
 module.exports = {
-  name: 'test-ember-4'
+  name: 'ember-concurrency-ajax'
 };
