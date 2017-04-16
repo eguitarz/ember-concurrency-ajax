@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import Ember from 'ember';
 import { task } from 'ember-concurrency';
 import { concatTasks } from 'ember-concurrency-ajax/utils';
