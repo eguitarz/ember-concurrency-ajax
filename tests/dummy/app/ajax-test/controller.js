@@ -9,7 +9,7 @@ export default Controller.extend({
   ecajax: inject.service(),
   tasks: computed.alias('ecajax.tasks'),
   result: Ember.A(),
-  concatTasks: concatTasks,
+  concatTasks,
 
   slice: task(function* (val) {
     yield console.log('slicing beef', val);
@@ -26,15 +26,18 @@ export default Controller.extend({
     ecajax.createTask({ name: 'enqueue', policy: 'enqueue'});
     ecajax.createTask({ name: 'drop', policy: 'drop'});
     ecajax.createTask({ name: 'restartable', policy: 'restartable', maxConcurrency: 5 });
-    
-    this.get('concatTasks').perform(
-      ecajax.request('/beef.json'), 
-      this.get('slice'),
-      this.get('pack')
-    );
   },
 
   actions: {
+    concat() {
+      let ecajax = this.get('ecajax');
+      this.get('concatTasks').perform(
+        ecajax.request('/beef.json'), 
+        this.get('slice'),
+        this.get('pack')
+      );
+    },
+
     process(data) {
       let result = this.get('result');
       result.pushObject(data.foo);

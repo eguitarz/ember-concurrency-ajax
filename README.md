@@ -170,15 +170,16 @@ export default Ember.Controller.extend({
     yield console.log('packing beef', val);
   }),
 
-  init() {
-    this._super(...arguments);
-    let ecajax = this.get('ecajax');
-    
-    this.get('concatTasks').perform(
-      ecajax.request('/beef.json'), 
-      this.get('slice'),
-      this.get('pack')
-    );
+  actions: {
+    concat: {
+      let ecajax = this.get('ecajax');
+      
+      this.get('concatTasks').perform(
+        ecajax.request('/beef.json'), 
+        this.get('slice'),
+        this.get('pack')
+      );
+    }
   },
 });
 ```
