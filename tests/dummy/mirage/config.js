@@ -12,7 +12,7 @@ export default function() {
   this.namespace = '';    // make this `/api`, for example, if your API is namespaced
   this.timing = 2000;      // delay for each request, automatically set to 0 during testing
 
-  this.get('/test.json', () => {
+  this.get('/*.json', () => {
     let num = Math.random() * 100|0;
     return `{"foo": ${num}}`;
   });

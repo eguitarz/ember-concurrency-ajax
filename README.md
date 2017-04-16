@@ -14,16 +14,25 @@ Send request in controllers
 
 export default Controller.extend({
   ecajax: Ember.inject.service(),
+
+  slice: task(function* (beef) {
+    console.log('slicing beef');
+    return beef;
+  }),
+
+  pack: task(function* (beef) {
+    console.log('packing beef');
+  }),
+
   actions: {
     request() {
-      let url = '/api/v1/foo';
       let ecajax = this.get('ecajax');
 
       // every request returns a TaskInstance
-      let promise = ecajax.request(url);
+      let beef = ecajax.request('/api/v1/beef').catch(err => console.log('error!;));
 
-      promise.then(data => this.set('data', data)
-        .catch(error => throw 'something is wrong!'));
+      // concat the taskInstances and tasks
+      ecajax.concat(beef, slice, pack);
     }
   }
 })
@@ -136,6 +145,43 @@ Get the task with a name in the service.
 </button>
 ```
 
+### utils
+- `concatTasks`
+
+Concatenate Task or TaskInstance in a row.
+
+```
+import Ember from 'ember';
+import { task } from 'ember-concurrency';
+import { concatTasks } from 'ember-concurrency-ajax/utils';
+
+export default Ember.Controller.extend({
+  ecajax: inject.service(),
+  tasks: computed.alias('ecajax.tasks'),
+  result: Ember.A(),
+  concatTasks: concatTasks,
+
+  slice: task(function* (val) {
+    yield console.log('slicing beef', val);
+    return val;
+  }),
+
+  pack: task(function* (val) {
+    yield console.log('packing beef', val);
+  }),
+
+  init() {
+    this._super(...arguments);
+    let ecajax = this.get('ecajax');
+    
+    this.get('concatTasks').perform(
+      ecajax.request('/beef.json'), 
+      this.get('slice'),
+      this.get('pack')
+    );
+  },
+});
+```
 
 [build-status-img]: https://travis-ci.org/eguitarz/ember-concurrency-ajax.svg?branch=master
 [build-status-link]: https://travis-ci.org/eguitarz/ember-concurrency-ajax
